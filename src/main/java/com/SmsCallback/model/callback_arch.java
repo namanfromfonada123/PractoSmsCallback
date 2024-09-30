@@ -1,6 +1,7 @@
-package com.SmsCallback.model;
+package com.SmsCallback.Model;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -16,38 +17,62 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "callbackril_arch" , uniqueConstraints = @UniqueConstraint(columnNames = "txid"))
+@Table(name = "callback_dhani_arch", uniqueConstraints = @UniqueConstraint(columnNames = "txid"))
 public class callback_arch {
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
-	
+
 	private String corelationid;
-	private String txid;
-	private String tok;
-	private String fromk;
+	@Column(length = 50)
+	private String txid;// 20
+
+	@Column(length = 20)
+	private String tok;// 15 mo
+
+	@Column(length = 35)
+	private String fromk; // 30
+
+	@Column(length = 150)
 	private String description;
+
+	@Column(length = 20)
 	private String pdu;
-	private String text;
-	private String deliverystatus;
-	private String deliverydt;
-	
-	
+
+	@Column(length = 1000)
+	private String text; // 1000
+
+	@Column(length = 50)
+	private String deliverystatus; // 15
+
+	@Column(length = 20)
+	private String deliverydt;// 20
+
+	@Column(length = 20)
+	private String submitDate;// 20
+
+	@Column(columnDefinition = "varchar(1) default 0")
+	private String clicked;
+
 	@Column(length = 65535, columnDefinition = "Text")
 	private String response;
-	
 
-	  private String createdOn;
-	  private String updatedOn;
-	  
-	  @PrePersist
-	  protected void onCreate() {
-	      createdOn = LocalDateTime.now().toString();
-	  }
-	  
-	  @PreUpdate
-	  protected void onUpdate() {
-	      updatedOn = LocalDateTime.now().toString();
-	  }
+	@Column(length = 20)
+	private String createdOn;
+
+	@Column(length = 20)
+	private String updatedOn;
+
+	@PrePersist
+	protected void onCreate() {
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+		createdOn = LocalDateTime.now().format(formatter);
+	}
+
+	@PreUpdate
+	protected void onUpdate() {
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+		updatedOn = LocalDateTime.now().format(formatter);
+	}
 }

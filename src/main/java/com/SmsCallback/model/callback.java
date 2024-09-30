@@ -1,7 +1,10 @@
-package com.SmsCallback.model;
+package com.SmsCallback.Model;
+
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -15,38 +18,59 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "callbackril" , uniqueConstraints = @UniqueConstraint(columnNames = "txid"))
+@Table(name = "callback_dhani" , uniqueConstraints = @UniqueConstraint(columnNames = "txid"))
 public class callback {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	long id;
 	private String corelationid;
-	private String txid;
-	private String tok;
-	private String fromk; // -- leave
-	private String description;
-	private String pdu;
-	private String text;// -- leave
-	private String deliverystatus;
-	private String deliverydt;
-	private int flag; // --leave
-	
 
-	  private String createdOn;
-	  private String updatedOn;
+	@Column(length = 50)
+	private String txid;//20
+	
+	@Column(length = 20)
+	private String tok;//15 mo
+	
+	@Column(length = 35)
+	private String fromk; //30
+	
+	@Column(length = 150)
+	private String description;
+	
+	@Column(length = 20)
+	private String pdu;
+	
+	@Column(length = 1000)
+	private String text; // 1000
+	
+	@Column(length = 50)
+	private String deliverystatus; //15
+	
+	@Column(length = 20)
+	private String deliverydt;//20
+	
+	@Column(length = 20)
+	private String submitDate;//20
+	
+	@Column(columnDefinition = "varchar(1) default 0")
+	private String clicked;
+	private int flag; 
+	
+	@Column(length = 20)
+	private String createdOn;
+	
+	@Column(length = 20)
+	private String updatedOn;
 	  
 	  @PrePersist
 	  protected void onCreate() {
-	      createdOn = LocalDateTime.now().toString();
+	        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+	      createdOn = LocalDateTime.now().format(formatter);
 	  }
 	  
 	  @PreUpdate
 	  protected void onUpdate() {
-	      updatedOn = LocalDateTime.now().toString();
+	        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+	      updatedOn = LocalDateTime.now().format(formatter);
 	  }
 }
-
-//http://{clienturl path}?corelationid={ corelationid }&txid={transactionId}&to={recpient}&from={sender}&description={description}&pdu={totalPdu}&text={message}&deliverystatus={status}&deliverydt={doneDate} 
-
-//	 callbackril_arch--done
-// get data by date --> date is taken as query param in get method--> done

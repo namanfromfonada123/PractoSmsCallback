@@ -9,12 +9,14 @@ public class DateOrTimeFormat {
 	
 
 
-	public static String changeDateFormate( String date) throws ParseException {
-		SimpleDateFormat sdfSource = new SimpleDateFormat("dd-MM-yyyy");
+	public static String changeDateFormate( String date , String Formate1, String Formate2) throws ParseException {
+
+		SimpleDateFormat sdfSource = new SimpleDateFormat(Formate1);
 	    Date dateobj = sdfSource.parse(date);
-	    SimpleDateFormat sdfDestination = new SimpleDateFormat("yyyy-MM-dd");
+	    
+	    SimpleDateFormat sdfDestination = new SimpleDateFormat(Formate2);
 	    String dateString= sdfDestination.format(dateobj);
-	    System.out.println(dateString);
+
 	    return dateString;
 	    
 	}

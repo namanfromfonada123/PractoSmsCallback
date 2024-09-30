@@ -21,10 +21,10 @@ public class SmsCallbackRecordApplication{
 	@Bean("Async")
 	 TaskExecutor getAsyncTaskExecutor() {
 		ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-		executor.setCorePoolSize(20);
-		executor.setMaxPoolSize(40);
-		executor.setQueueCapacity(30);
-		executor.setWaitForTasksToCompleteOnShutdown(false);
+		executor.setCorePoolSize(400);
+		executor.setMaxPoolSize(600);
+		executor.setQueueCapacity(500);
+		executor.setWaitForTasksToCompleteOnShutdown(true);
 		executor.setThreadNamePrefix("Async- ");
 		return executor;
 	}
