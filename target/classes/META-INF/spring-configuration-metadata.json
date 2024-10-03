@@ -1,0 +1,27 @@
+{
+  "groups": [
+    {
+      "name": "",
+      "type": "com.SmsCallback.InternalRestRequest.Properties",
+      "sourceType": "com.SmsCallback.InternalRestRequest.Properties"
+    }
+  ],
+  "properties": [
+    {
+      "name": "header",
+      "type": "java.util.Map<java.lang.String,java.lang.String>",
+      "sourceType": "com.SmsCallback.InternalRestRequest.Properties"
+    },
+    {
+      "name": "path-variable",
+      "type": "java.util.TreeMap<java.lang.String,java.lang.String>",
+      "sourceType": "com.SmsCallback.InternalRestRequest.Properties"
+    },
+    {
+      "name": "query",
+      "type": "java.util.Map<java.lang.String,java.lang.String>",
+      "sourceType": "com.SmsCallback.InternalRestRequest.Properties"
+    }
+  ],
+  "hints": []
+}
