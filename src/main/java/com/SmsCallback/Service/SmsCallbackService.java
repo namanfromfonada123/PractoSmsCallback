@@ -1,89 +1,72 @@
 package com.SmsCallback.Service;
 
-import com.SmsCallback.InternalRestRequest.RestRequestClass;
+import com.SmsCallback.Config.QueueProducer;
 
-import com.SmsCallback.Model.callbackpracto;
-import com.SmsCallback.Model.callbackpracto_arch;
+import com.SmsCallback.utility.CallbackPojo;
 
-import com.SmsCallback.Repository.callbackpractoRepository;
-import com.SmsCallback.Repository.callbackpracto_archRepository;
-
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
-import java.util.concurrent.Future;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.AsyncResult;
+
 import org.springframework.stereotype.Service;
 
 @Service
 public class SmsCallbackService {
 
-  @Autowired
-  callbackpractoRepository cbpRepository;
-  
-  @Autowired
-  RestRequestClass requestClass;
-  
-  @Autowired
-  callbackpracto_archRepository cbpaRepository;
-  
- 
-  
-  public void saveCallbackpractoData(Map<String, String> callBackData) {
-    callbackpracto cb = new callbackpracto();
-    
-	DateTimeFormatter dFormatter = DateTimeFormatter.ofPattern("yyyyMMdd");
-	String partition = "p"+LocalDate.now().format(dFormatter);
-        
-    try {
-    	this.cbpRepository.insertIntoPartition(partition, callBackData.get("corelationid"), callBackData.get("txid"), callBackData.get("to"), callBackData.get("from"),
-    			callBackData.get("description"), callBackData.get("pdu"), callBackData.get("text"), callBackData.get("deliverystatus"), callBackData.get("deliverydt"), 0);
-    	
-    } catch (Exception e) {
-      System.out.println(e.getMessage());
-    } 
-  }
-  
+	@Autowired
+	QueueProducer queueProducer;
 
-@Async("Async")
-  public Future<ResponseEntity<String>> getcall(callbackpracto cb) {
-    return (Future<ResponseEntity<String>>)new AsyncResult(this.requestClass.getRequest(cb));
-  }
+	public void saveCallbackpractoData(Map<String, String> callBackData) {
+		try {
 
-  @Async("Async")
-  public void saveCallbackpracto_archData(callbackpracto cb, String Response) {
+			CallbackPojo cb = new CallbackPojo();
 
-    callbackpracto_arch cba = new callbackpracto_arch();
-    cba.setCorelationid(cb.getCorelationid());
-    cba.setTxid(cb.getTxid());
-    cba.setTok(cb.getTok());
-    cba.setFromk(cb.getFromk());
-    cba.setDescription(cb.getDescription());
-    cba.setPdu(cb.getPdu());
-    cba.setText(cb.getText());
-    cba.setDeliverystatus(cb.getDeliverystatus());
-    cba.setDeliverydt(cb.getDeliverydt());
-    cba.setResponse(Response);
-    cba.setCreated_date(LocalDate.now());
-    System.out.println("cba" + cba);
-    try {
+			String DeliveryDate = changeDatetoUTCandISO(callBackData.get("deliverydt"));
 
-        DateTimeFormatter dFormatter = DateTimeFormatter.ofPattern("yyyyMMdd");
-        String partition = "p"+LocalDate.now().format(dFormatter);
+			cb.setCorelationid(callBackData.get("corelationid"));
+			cb.setDeliverydt(DeliveryDate);
+			cb.setDeliverystatus(callBackData.get("deliverystatus"));
+			cb.setDescription(callBackData.get("description"));
+			cb.setFromk(callBackData.get("from"));
+			cb.setPdu(callBackData.get("pdu"));
+			cb.setText(callBackData.get("text"));
+			cb.setTok(callBackData.get("to"));
+			cb.setTxid(callBackData.get("txid"));
 
-    	
-    	this.cbpRepository.insertIntoPartitionPractoArch(partition, cb.getCorelationid(), cb.getTxid(), cb.getTok(), cb.getFromk(),
-    			cb.getDescription(), cb.getPdu(), cb.getText(), cb.getDeliverystatus(), cb.getDeliverydt(),
-    			Response);
-      
-      this.cbpRepository.deleteFromPartition(partition, cb.getId());
-    }
-    
-    catch (Exception ex) {
-      System.out.println("cbsave error" + ex.getMessage());
-    } 
-  }
+			queueProducer.sendMessage(cb);
+
+		} catch (Exception e) {
+			System.out.println("Exception While Sending TO RabbitMq : " + e.getMessage());
+		}
+
+	}
+
+	public String changeDatetoUTCandISO(String deliverydt) {
+
+		// Define the formatter for the input date format
+		DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+		// Parse the input string to a LocalDateTime object
+		LocalDateTime localDateTime = LocalDateTime.parse(deliverydt, inputFormatter);
+
+		// Assume the input date is in UTC (interpreted without changes)
+		ZonedDateTime utcDateTime = localDateTime.atZone(ZoneId.of("UTC"));
+
+		// Now convert this UTC date to UTC-05:30 time zone (it will subtract 5 hours
+		// and 30 minutes)
+		ZonedDateTime zonedDateTime = utcDateTime.withZoneSameInstant(ZoneId.of("UTC-05:30"));
+
+		// Define the ISO date formatter
+		DateTimeFormatter isoFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+
+		// Format the ZonedDateTime to the ISO string
+		String isoDate = zonedDateTime.format(isoFormatter);
+
+		return isoDate;
+
+	}
+
 }

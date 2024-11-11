@@ -18,14 +18,26 @@ public class SmsCallbackRecordApplication{
 		SpringApplication.run(SmsCallbackRecordApplication.class, args);
 	}
 
-	@Bean("Async")
+	@Bean("apiCall")
+	 TaskExecutor apiCallAsyncTaskExecutor() {
+		ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+		executor.setCorePoolSize(400);
+		executor.setMaxPoolSize(600);
+		executor.setQueueCapacity(500);
+		executor.setWaitForTasksToCompleteOnShutdown(true);
+		executor.setThreadNamePrefix("apiCall- ");
+		return executor;
+	}
+
+	
+	@Bean("callbackInsert")
 	 TaskExecutor getAsyncTaskExecutor() {
 		ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
 		executor.setCorePoolSize(400);
 		executor.setMaxPoolSize(600);
 		executor.setQueueCapacity(500);
 		executor.setWaitForTasksToCompleteOnShutdown(true);
-		executor.setThreadNamePrefix("Async- ");
+		executor.setThreadNamePrefix("callbackInsert- ");
 		return executor;
 	}
 

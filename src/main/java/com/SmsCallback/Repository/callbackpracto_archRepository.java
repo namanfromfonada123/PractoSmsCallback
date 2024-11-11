@@ -1,17 +1,16 @@
 package com.SmsCallback.Repository;
 
-import java.time.LocalDate;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-import org.springframework.transaction.annotation.Transactional;
 
+
+import com.SmsCallback.Model.callbackpracto;
 import com.SmsCallback.Model.callbackpracto_arch;
 
 public interface callbackpracto_archRepository extends JpaRepository<callbackpracto_arch, Long> {
 	
+	
+	callbackpracto_arch findAllBytxid(String paramString);
 	
 //	  @Modifying
 //	  @Transactional
