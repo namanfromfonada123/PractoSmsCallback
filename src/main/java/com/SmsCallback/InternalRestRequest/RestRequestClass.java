@@ -41,9 +41,15 @@ public class RestRequestClass {
     builder.queryParam(queryParam.get("deliverystatus"), new Object[] { cb.getDeliverystatus() });
     builder.queryParam(queryParam.get("deliverydt"), new Object[] { cb.getDeliverydt() });
     String finalUrlString = builder.build().toUriString();
-    System.out.println(finalUrlString);
+    logger.info("Get call To  : "+finalUrlString);
     try {
+    	
+      logger.info("Api call Start Time : {} of txid : {} ", System.currentTimeMillis(),cb.getTxid());
       ResponseEntity<String> responseEntity = this.restTemplate.exchange(finalUrlString, HttpMethod.GET, getHttpEntity(setHeaders()), String.class, new Object[0]);
+      logger.info("Api call End Time : {} of txid : {} ", System.currentTimeMillis(),cb.getTxid());
+      logger.info("Response from client api  : {} of txid : {} ", responseEntity.getBody(), cb.getTxid());     
+      
+      
       finalUrlString = "";
       return responseEntity;
     } catch (Exception e) {
