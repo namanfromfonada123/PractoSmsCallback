@@ -78,9 +78,13 @@ public class ConsumerService {
 	
 	
 	
+	// @Async("apiCall")
+	//   public Future<ResponseEntity<String>> getcall(callbackpracto cb) {
+	//     return (Future<ResponseEntity<String>>)new AsyncResult(this.requestClass.getRequest(cb));
+	//   }
 	@Async("apiCall")
-	  public Future<ResponseEntity<String>> getcall(callbackpracto cb) {
-	    return (Future<ResponseEntity<String>>)new AsyncResult(this.requestClass.getRequest(cb));
+	  public Future<ResponseEntity<String>> getcall(callback_arch cb, String errorCode, String ErrorDescription) throws Exception {
+	    return (Future<ResponseEntity<String>>)new AsyncResult(this.requestClass.getRequest(cb,errorCode,ErrorDescription));
 	  }
 	
 
