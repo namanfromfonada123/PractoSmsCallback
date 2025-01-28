@@ -52,7 +52,9 @@ public class ConsumerService {
 		    // getcall returns a Future, convert it to CompletableFuture for chaining
 		    CompletableFuture<ResponseEntity<String>> responseFuture = CompletableFuture.supplyAsync(() -> {
 		        try {
-		            return getcall(cb).get();  // Ensure getcall returns a Future
+		            // return getcall(cb).get();  // Ensure getcall returns a Future
+		  return getcall(cb,cbp.getErrCode(),cbp.getErrorDescription()).get();  // Ensure getcall returns a Future
+
 		        } catch (InterruptedException | ExecutionException e) {
 			    	logger.info("Exception during ClientApi Call " + e.getLocalizedMessage());
 		            throw new RuntimeException(e);
